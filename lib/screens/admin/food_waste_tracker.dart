@@ -12,6 +12,20 @@
 //   }
 // }
 
+// import 'package:flutter/material.dart';
+
+// class FoodWasteTracker extends StatelessWidget {
+//   const FoodWasteTracker({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text("Food Waste Tracker")),
+//       body: const Center(child: Text("Food Waste Tracker Page")),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -22,11 +36,21 @@ class FoodWasteTracker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Food Waste Tracker", style: TextStyle(color: Colors.white)),
+        title: const Text(
+          "Food Waste Tracker",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
         backgroundColor: Colors.black,
+        elevation: 5,
       ),
-      backgroundColor: Colors.black,
-      body: Padding(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.black, Colors.blueGrey],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,64 +66,103 @@ class FoodWasteTracker extends StatelessWidget {
     );
   }
 
-  /// **📌 Section Title**
+  /// **📌 Section Title with Styling**
   Widget _buildHeader(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
 
-  /// **📊 Summary Card for Total Waste**
+  /// **📊 Improved Summary Card**
   Widget _buildSummaryCard() {
     return Card(
-      color: Colors.grey[900],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 6,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      color: Colors.grey[850],
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Total Waste Today: 30%", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.redAccent)),
-            const SizedBox(height: 8),
-            const Text("Weekly Average: 28%", style: TextStyle(fontSize: 16, color: Colors.white70)),
+            const Text(
+              "Total Waste Today: 30%",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.redAccent,
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              "Weekly Average: 28%",
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white70,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  /// **🥧 Pie Chart for Meal-wise Waste Breakdown**
+  /// **🥧 Enhanced Pie Chart**
   Widget _buildPieChart() {
     final List<_PieData> pieData = [
-      _PieData("Breakfast", 25),
-      _PieData("Lunch", 40),
-      _PieData("Dinner", 35),
+      _PieData("Breakfast", 25, Colors.orangeAccent),
+      _PieData("Lunch", 40, Colors.lightBlueAccent),
+      _PieData("Dinner", 35, Colors.purpleAccent),
     ];
 
-    return SizedBox(
-      height: 250,
-      child: SfCircularChart(
-        legend: const Legend(isVisible: true, textStyle: TextStyle(color: Colors.white)),
-        series: <CircularSeries<_PieData, String>>[
-          PieSeries<_PieData, String>(
-            dataSource: pieData,
-            xValueMapper: (_PieData data, _) => data.meal,
-            yValueMapper: (_PieData data, _) => data.waste,
-            dataLabelSettings: const DataLabelSettings(isVisible: true, textStyle: TextStyle(color: Colors.white)),
-          )
-        ],
+    return Card(
+      elevation: 6,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      color: Colors.grey[850],
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: SizedBox(
+          height: 250,
+          child: SfCircularChart(
+            legend: const Legend(
+              isVisible: true,
+              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            series: <CircularSeries<_PieData, String>>[
+              PieSeries<_PieData, String>(
+                dataSource: pieData,
+                xValueMapper: (_PieData data, _) => data.meal,
+                yValueMapper: (_PieData data, _) => data.waste,
+                pointColorMapper: (_PieData data, _) => data.color,
+                dataLabelSettings: const DataLabelSettings(
+                  isVisible: true,
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-/// **📊 Pie Chart Data Model**
+/// **📊 Updated Pie Chart Data Model with Colors**
 class _PieData {
   final String meal;
   final double waste;
-  _PieData(this.meal, this.waste);
+  final Color color;
+  _PieData(this.meal, this.waste, this.color);
 }

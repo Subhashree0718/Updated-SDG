@@ -18,7 +18,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     _loadBills();
   }
 
-  /// Load saved bills and calculate total weekly calories
   Future<void> _loadBills() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> storedBills = prefs.getStringList('bills') ?? [];
@@ -30,7 +29,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     });
   }
 
-  /// Calculate the total calories from all bills
   int _calculateTotalCalories(List<String> billList) {
     int total = 0;
     for (String bill in billList) {
@@ -39,25 +37,24 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     return total;
   }
 
-  /// Extract calories from a bill string
   int _extractCalories(String bill) {
     RegExp regex = RegExp(r"Total Calories: (\d+) cal");
     Match? match = regex.firstMatch(bill);
-    if (match != null) {
-      return int.parse(match.group(1)!);
-    }
-    return 0;
+    return match != null ? int.parse(match.group(1)!) : 0;
   }
 
-  /// Clear all saved bills with confirmation
   Future<void> _clearBills() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("Are you sure? This action cannot be undone."),
+        backgroundColor: Colors.black87,
+        content: Text(
+          "Are you sure? This action cannot be undone.",
+          style: TextStyle(color: Colors.white),
+        ),
         action: SnackBarAction(
           label: "CLEAR",
+          textColor: Colors.redAccent,
           onPressed: () async {
             await prefs.remove('bills');
             setState(() {
@@ -72,38 +69,43 @@ class _CalorieTrackerState extends State<CalorieTracker> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
-        cardTheme: CardTheme(
-          color: Colors.grey[900],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF0F0F1A), // Deep Navy
+              Color(0xFF1C1C27), // Charcoal Gray
+            ],
           ),
         ),
-      ),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Calorie Tracker",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          actions: [
-            if (bills.isNotEmpty)
-              IconButton(
-                icon: Icon(Icons.delete, color: Colors.redAccent),
-                onPressed: _clearBills,
-                tooltip: "Clear All Bills",
-              ),
-          ],
-        ),
-        body: Column(
+        child: Column(
           children: [
+            SizedBox(height: 50),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Calorie Tracker",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (bills.isNotEmpty)
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.redAccent),
+                      onPressed: _clearBills,
+                      tooltip: "Clear All Bills",
+                    ),
+                ],
+              ),
+            ),
             Expanded(
               child: bills.isEmpty
                   ? Center(
@@ -113,25 +115,28 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                       ),
                     )
                   : ListView.builder(
+                      padding: EdgeInsets.all(12),
                       itemCount: bills.length,
                       itemBuilder: (context, index) {
                         int billCalories = _extractCalories(bills[index]);
 
                         return AnimatedContainer(
-                          duration: Duration(milliseconds: 500),
-                          margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          padding: EdgeInsets.all(12),
+                          duration: Duration(milliseconds: 400),
+                          curve: Curves.easeInOut,
+                          margin: EdgeInsets.only(bottom: 10),
+                          padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.grey[900],
+                            color: Color(0xFF23233A), // Darker Box
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.blueAccent.withOpacity(0.3),
-                                blurRadius: 10,
-                                spreadRadius: 2,
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 8,
+                                spreadRadius: 1,
                                 offset: Offset(0, 4),
                               ),
                             ],
+                            border: Border.all(color: Colors.grey.shade800, width: 1.2),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,11 +149,11 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              SizedBox(height: 6),
                               Text(
                                 "Calories: $billCalories cal",
                                 style: TextStyle(
-                                  color: Colors.greenAccent,
+                                  color: Colors.green.shade400,
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -160,41 +165,49 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                     ),
             ),
 
-            // Weekly Calories Bar (Updated Total Calculation)
+            /// **Weekly Calories Section**
+            SizedBox(height: 10),
             Container(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(18),
+              margin: EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.blueGrey[900],
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: BorderRadius.circular(15),
+                color: Color(0xFF23233A), // Matching card color
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blueAccent.withOpacity(0.4),
-                    blurRadius: 12,
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 10,
                     spreadRadius: 1,
-                    offset: Offset(0, -4),
+                    offset: Offset(0, -3),
                   ),
                 ],
+                border: Border.all(color: Colors.grey.shade700, width: 1.2),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     "This Week's Calories:",
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   Text(
                     "$totalWeeklyCalories cal",
                     style: TextStyle(
                       color: totalWeeklyCalories > 2000
                           ? Colors.redAccent
-                          : Colors.greenAccent,
-                      fontSize: 18,
+                          : Colors.green.shade400,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
             ),
+            SizedBox(height: 20),
           ],
         ),
       ),

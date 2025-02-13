@@ -239,12 +239,12 @@ class _FeedbackCheckerState extends State<FeedbackChecker> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             // Search Bar
@@ -257,7 +257,7 @@ class _FeedbackCheckerState extends State<FeedbackChecker> {
                 filled: true,
                 fillColor: Colors.grey[900],
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
               ),
@@ -267,13 +267,13 @@ class _FeedbackCheckerState extends State<FeedbackChecker> {
                 });
               },
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
 
-            // Filter Buttons (All, Unread, Resolved)
+            // Filter Buttons
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: ["All", "Unread", "Resolved"].map((filter) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -294,14 +294,13 @@ class _FeedbackCheckerState extends State<FeedbackChecker> {
                 }).toList(),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
 
             // Feedback List
             Expanded(
               child: displayedFeedback.isEmpty
-                  ? Center(child: Text("No feedback available", style: TextStyle(color: Colors.white54)))
+                  ? Center(child: Text("No feedback available", style: TextStyle(color: Colors.white54, fontSize: 16)))
                   : ListView.builder(
-                      shrinkWrap: true,  // Prevent overflow issues
                       itemCount: displayedFeedback.length,
                       itemBuilder: (context, index) {
                         var feedback = displayedFeedback[index];
@@ -348,27 +347,42 @@ class FeedbackCard extends StatelessWidget {
       color: Colors.grey[900],
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        leading: Icon(sentimentIcon, color: sentimentColor, size: 32),
-        title: Text(name, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
           children: [
-            Text(feedback, style: GoogleFonts.poppins(fontSize: 14, color: Colors.white70)),
-            Text("Date: $date", style: TextStyle(fontSize: 12, color: Colors.white54)),
-          ],
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Switch(
-              value: resolved,
-              onChanged: (value) => onToggleResolved(),
-              activeColor: Colors.green,
-              inactiveThumbColor: Colors.red,
+            // Sentiment Icon
+            Icon(sentimentIcon, color: sentimentColor, size: 36),
+            const SizedBox(width: 12),
+
+            // Feedback Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                  const SizedBox(height: 4),
+                  Text(feedback, style: GoogleFonts.poppins(fontSize: 14, color: Colors.white70), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 4),
+                  Text("Date: $date", style: TextStyle(fontSize: 12, color: Colors.white54)),
+                ],
+              ),
             ),
-            Text(resolved ? "Resolved" : "Unread", style: TextStyle(color: Colors.white, fontSize: 12)),
+
+            // Toggle Switch
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Switch(
+                  value: resolved,
+                  onChanged: (value) => onToggleResolved(),
+                  activeColor: Colors.green,
+                  inactiveThumbColor: Colors.red,
+                ),
+                Text(resolved ? "Resolved" : "Unread", style: TextStyle(color: Colors.white, fontSize: 12)),
+              ],
+            ),
           ],
         ),
       ),
