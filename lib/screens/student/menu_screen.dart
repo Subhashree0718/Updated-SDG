@@ -15,14 +15,16 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
   late Animation<double> _fadeAnimation;
 
   final List<Map<String, dynamic>> menuItems = [
-    {"name": "Pizza", "calories": 250, "quantity": 0, "image": null},
-    {"name": "Pasta", "calories": 200, "quantity": 0, "image": null},
-    {"name": "Burger", "calories": 300, "quantity": 0, "image": null},
-    {"name": "Fries", "calories": 400, "quantity": 0, "image": null},
-    {"name": "Salad", "calories": 120, "quantity": 0, "image": null},
-    {"name": "Sushi", "calories": 220, "quantity": 0, "image": null},
-    {"name": "Biryani", "calories": 550, "quantity": 0, "image": null},
-    {"name": "Falooda", "calories": 350, "quantity": 0, "image": null},
+   {"name": "Idli", "calories": 150, "quantity": 0, "icon": "https://cdn-icons-png.flaticon.com/128/3430/3430455.png"},
+    {"name": "Dosa", "calories": 200, "quantity": 0, "icon": "https://cdn-icons-png.freepik.com/256/9667/9667414.png?ga=GA1.1.1661353638.1725608911&semt=ais_hybrid"},
+    {"name": "Chapati", "calories": 180, "quantity": 0, "icon": "https://cdn-icons-png.flaticon.com/128/4727/4727322.png"},
+    {"name": "Chicken Rice", "calories": 300, "quantity": 0, "icon": "https://cdn-icons-png.flaticon.com/128/4780/4780045.png"},
+    {"name": "Upma", "calories": 250, "quantity": 0, "icon": "https://cdn-icons-png.flaticon.com/128/11361/11361470.png"},
+    {"name": "Parotta", "calories": 400, "quantity": 0, "icon": "https://cdn-icons-png.flaticon.com/128/7843/7843273.png"},
+    {"name": "Vada", "calories": 350, "quantity": 0, "icon": "https://cdn-icons-png.flaticon.com/128/9487/9487222.png"},
+    {"name": "Sambar", "calories": 120, "quantity": 0, "icon": "https://cdn-icons-png.flaticon.com/128/4286/4286924.png"},
+    {"name": "Rasam", "calories": 100, "quantity": 0, "icon": "https://cdn-icons-png.flaticon.com/128/12900/12900367.png"},
+    {"name": "Biryani", "calories": 550, "quantity": 0, "icon": "https://cdn-icons-png.flaticon.com/128/4681/4681934.png"},
   ];
 
   @override

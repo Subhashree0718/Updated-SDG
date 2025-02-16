@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "661204891179",
+    "project_id": "messy-8345f",
+    "storage_bucket": "messy-8345f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661204891179:android:84bdf72555cd0df2025c6e",
+        "android_client_info": {
+          "package_name": "com.SDG.Messy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClh-cgGNj9xa_gaggn8ogqvxluS93UzFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661204891179:android:f60db3408ea3b0bc025c6e",
+        "android_client_info": {
+          "package_name": "com.example.my_food_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClh-cgGNj9xa_gaggn8ogqvxluS93UzFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

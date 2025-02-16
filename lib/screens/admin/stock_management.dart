@@ -36,11 +36,16 @@ class StockManagement extends StatefulWidget {
 class _StockManagementState extends State<StockManagement> {
   // Food stock list (Sample Data)
   final List<Map<String, dynamic>> stockItems = [
-    {"name": "Pizza", "quantity": 10},
-    {"name": "Pasta", "quantity": 5},
-    {"name": "Sandwich", "quantity": 2},
-    {"name": "Burger", "quantity": 12},
-    {"name": "Fries", "quantity": 4},
+    {"name": "Rice", "quantity": 50},
+    {"name": "Urad Dal", "quantity": 20},
+    {"name": "Toor Dal", "quantity": 15},
+    {"name": "Wheat Flour", "quantity": 30},
+    {"name": "Coconut", "quantity": 15},
+    {"name": "Tomato", "quantity": 20},
+    {"name": "Onion", "quantity": 25},
+    {"name": "Milk", "quantity": 20},
+    {"name": "Ghee", "quantity": 10},
+    {"name": "Oil", "quantity": 30},
   ];
 
   // Function to update stock quantity

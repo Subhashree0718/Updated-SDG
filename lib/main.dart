@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'screens/admin/admin_dashboard.dart';
-import 'screens/student/student_dashboard.dart';
+import 'screens/admin/AdminLogin.dart';
+import 'screens/student/StudentLogin.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+   Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -48,7 +52,16 @@ class LoginPage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AdminDashboard()),
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 600),
+                      pageBuilder: (_, __, ___) => const AdminLogin(),
+                      transitionsBuilder: (_, animation, __, child) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        );
+                      },
+                    ),
                   );
                 },
               ),
@@ -61,7 +74,16 @@ class LoginPage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const StudentDashboard()),
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 600),
+                      pageBuilder: (_, __, ___) => const StudentLogin(),
+                      transitionsBuilder: (_, animation, __, child) {
+                        return ScaleTransition(
+                          scale: animation,
+                          child: child,
+                        );
+                      },
+                    ),
                   );
                 },
               ),
@@ -72,7 +94,8 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(BuildContext context, {required String title, required IconData icon, required Color color, required VoidCallback onTap}) {
+  Widget _buildCard(BuildContext context,
+      {required String title, required IconData icon, required Color color, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -94,11 +117,14 @@ class LoginPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 50, color: color),
+            Hero(
+              tag: title,
+              child: Icon(icon, size: 50, color: color),
+            ),
             const SizedBox(height: 10),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
