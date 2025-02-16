@@ -200,10 +200,11 @@ class FeedbackChecker extends StatefulWidget {
 
 class _FeedbackCheckerState extends State<FeedbackChecker> {
   List<Map<String, dynamic>> feedbackList = [
-    {"name": "John Doe", "feedback": "Great service!", "sentiment": "positive", "resolved": false, "date": "2025-02-12"},
-    {"name": "Alice Smith", "feedback": "Food quality needs improvement.", "sentiment": "negative", "resolved": false, "date": "2025-02-11"},
-    {"name": "Robert", "feedback": "Very fast response. Loved it!", "sentiment": "positive", "resolved": true, "date": "2025-02-10"},
-    {"name": "Sophia", "feedback": "The canteen is not clean.", "sentiment": "negative", "resolved": false, "date": "2025-02-09"},
+    {"name": "Karuppasamy", "feedback": "Great service!", "sentiment": "positive", "resolved": false, "date": "2025-02-12"},
+    {"name": "Meenakshi", "feedback": "Food quality needs improvement.", "sentiment": "negative", "resolved": false, "date": "2025-02-11"},
+    {"name": "Thenmozhi", "feedback": "Food quality needs improvement.", "sentiment": "negative", "resolved": false, "date": "2025-02-11"},
+    {"name": "K.Kuppusamy ", "feedback": "Very fast response. Loved it!", "sentiment": "positive", "resolved": true, "date": "2025-02-10"},
+    {"name": "Maragatham", "feedback": "The canteen is not clean.", "sentiment": "negative", "resolved": false, "date": "2025-02-09"},
   ];
 
   String selectedFilter = "All";
