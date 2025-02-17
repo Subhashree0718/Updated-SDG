@@ -181,8 +181,9 @@
 //     _controller.dispose();
 //     super.dispose();
 //   }
-// }import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// }import 'package:flutter/material.dart';*/
+
+/*import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart'; 
 import 'feedback_checker.dart';
 import 'food_waste_tracker.dart';
@@ -291,4 +292,199 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 }
+*/
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'dart:ui';
+import 'package:url_launcher/url_launcher.dart'; // Add this to launch the URL
 
+import 'feedback_checker.dart';
+import 'food_waste_tracker.dart';
+import 'release_menu.dart';
+import 'stock_management.dart';
+
+class AdminDashboard extends StatefulWidget {
+  const AdminDashboard({Key? key}) : super(key: key);
+
+  @override
+  _AdminDashboardState createState() => _AdminDashboardState();
+}
+
+class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late List<Animation<Offset>> _animations;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    _animations = List.generate(4, (index) {
+      return Tween<Offset>(begin: Offset(index.isEven ? -1.5 : 1.5, 0), end: Offset.zero)
+          .animate(CurvedAnimation(parent: _controller, curve: Curves.bounceOut));
+    });
+
+    _controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text("Admin Dashboard",
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+              color: Colors.white,
+            )),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.33,
+            width: double.infinity,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+              child: Image.asset(
+                'assets/Student.jpg',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                  childAspectRatio: 1,
+                ),
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return SlideTransition(
+                    position: _animations[index],
+                    child: _buildDashboardBox(
+                      context,
+                      ["Feedback Checker", "Food \n Waste Tracker", "Release Menu", "Stock \n Management"][index],
+                      [Icons.check, Icons.fastfood, Icons.restaurant_menu, Icons.inventory][index],
+                      [
+                        [Colors.orange, Colors.redAccent],
+                        [Colors.green, Colors.teal],
+                        [Colors.blue, Colors.lightBlueAccent],
+                        [Colors.purple, Colors.deepPurpleAccent]
+                      ][index],
+                      screen: [
+                        const FeedbackChecker(),
+                        const FoodWasteTracker(),
+                        const ReleaseMenu(),
+                        const StockManagement()
+                      ][index],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          // Horizontal box below the 4 boxes
+          GestureDetector(
+            onTap: () async {
+              // Open the URL in the browser
+              final Uri url = Uri.parse('https://foodprediction-gyayqbglbcgwagfmqntutc.streamlit.app/');
+              if (await canLaunch(url.toString())) {
+                await launch(url.toString());
+              } else {
+                throw 'Could not launch $url';
+              }
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.symmetric(vertical: 25),
+              decoration: BoxDecoration(
+                color: Colors.blueAccent,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blueAccent.withOpacity(0.5),
+                    blurRadius: 8,
+                    spreadRadius: 3,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  'Prediction Model',
+                  style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDashboardBox(BuildContext context, String title, IconData icon, List<Color> gradientColors,
+      {required Widget screen}) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => screen),
+      ),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: gradientColors.last.withOpacity(0.5),
+              blurRadius: 10,
+              spreadRadius: 3,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 60, color: Colors.white),
+              const SizedBox(height: 18),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

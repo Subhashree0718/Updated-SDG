@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:ui';
-
+import 'chatbot_screen.dart';
 import 'menu_screen.dart';
 import 'calorie_tracker.dart';
 import 'feedback_screen.dart';
@@ -34,7 +33,6 @@ class StudentDashboard extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Student image occupying the top 1/3 of the screen
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.33,
             width: double.infinity,
@@ -44,64 +42,30 @@ class StudentDashboard extends StatelessWidget {
                 bottomRight: Radius.circular(30),
               ),
               child: Image.asset(
-                'assets/Student.jpg', // Replace with the actual student image asset
+                'assets/Student.jpg',
                 fit: BoxFit.cover,
               ),
             ),
           ),
-
-          // The four boxes below the image
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final screens = [
-                    {
-                      "title": "Menu",
-                      "icon": Icons.restaurant_menu,
-                      "color": [Colors.orange, Colors.redAccent],
-                      "screen": const MenuScreen(),
-                    },
-                    {
-                      "title": "Calorie Tracker",
-                      "icon": Icons.fitness_center,
-                      "color": [Colors.green, Colors.teal],
-                      "screen": const CalorieTracker(),
-                    },
-                    {
-                      "title": "Chat With \n AI Expert",
-                      "icon": Icons.chat_bubble,
-                      "color": [Colors.blue, Colors.lightBlueAccent],
-                      "url": "https://chatbotsih-o2fapdft42pn9qyp4txxqu.streamlit.app/",
-                    },
-                    {
-                      "title": "Feedback",
-                      "icon": Icons.feedback,
-                      "color": [Colors.purple, Colors.deepPurpleAccent],
-                      "screen": const FeedbackScreen(),
-                    },
-                  ];
-
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                      childAspectRatio: 1,
-                    ),
-                    itemCount: screens.length,
-                    itemBuilder: (context, index) {
-                      return _buildDashboardBox(
-                        context,
-                        screens[index]["title"] as String,
-                        screens[index]["icon"] as IconData,
-                        screens[index]["color"] as List<Color>,
-                        screen: screens[index]["screen"] as Widget?,
-                        url: screens[index]["url"] as String?,
-                      );
-                    },
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                  childAspectRatio: 1,
+                ),
+                itemCount: screens.length,
+                itemBuilder: (context, index) {
+                  return _buildDashboardBox(
+                    context,
+                    screens[index]["title"] as String,
+                    screens[index]["icon"] as IconData,
+                    screens[index]["color"] as List<Color>,
+                    screen: screens[index]["screen"] as Widget?,
+                    url: screens[index]["url"] as String?,
                   );
                 },
               ),
@@ -129,9 +93,7 @@ class StudentDashboard extends StatelessWidget {
           navigateToScreen(context, screen);
         }
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
+      child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: gradientColors,
@@ -148,45 +110,22 @@ class StudentDashboard extends StatelessWidget {
             ),
           ],
         ),
-        child: Stack(
-          children: [
-            const BlurEffect(),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ScaleTransitionEffect(child: Icon(icon, size: 60, color: Colors.white)),
-                  const SizedBox(height: 18),
-                  Text(
-                    title,
-                    style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 60, color: Colors.white),
+              const SizedBox(height: 18),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class BlurEffect extends StatelessWidget {
-  const BlurEffect({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            ],
           ),
         ),
       ),
@@ -194,40 +133,29 @@ class BlurEffect extends StatelessWidget {
   }
 }
 
-class ScaleTransitionEffect extends StatefulWidget {
-  final Widget child;
-  const ScaleTransitionEffect({Key? key, required this.child}) : super(key: key);
-
-  @override
-  _ScaleTransitionEffectState createState() => _ScaleTransitionEffectState();
-}
-
-class _ScaleTransitionEffectState extends State<ScaleTransitionEffect>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..repeat(reverse: true);
-    _animation = Tween<double>(begin: 1.0, end: 1.1).animate(_controller);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ScaleTransition(
-      scale: _animation,
-      child: widget.child,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-}
+final List<Map<String, dynamic>> screens = [
+  {
+    "title": "Menu",
+    "icon": Icons.restaurant_menu,
+    "color": [Colors.orange, Colors.redAccent],
+    "screen": const MenuScreen(),
+  },
+  {
+    "title": "Calorie Tracker",
+    "icon": Icons.fitness_center,
+    "color": [Colors.green, Colors.teal],
+    "screen": const CalorieTracker(),
+  },
+  {
+    "title": "Chat With \n AI Expert",
+    "icon": Icons.chat_bubble,
+    "color": [Colors.blue, Colors.lightBlueAccent],
+    "screen": ChatBotScreen(),
+  },
+  {
+    "title": "Feedback",
+    "icon": Icons.feedback,
+    "color": [Colors.purple, Colors.deepPurpleAccent],
+    "screen": const FeedbackScreen(),
+  },
+];

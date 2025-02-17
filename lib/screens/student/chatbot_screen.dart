@@ -1,138 +1,163 @@
+/*
 import 'package:flutter/material.dart';
-import 'dart:async'; // For typing delay
+import 'package:google_generative_ai/google_generative_ai.dart';
 
-class ChatbotScreen extends StatefulWidget {
-  const ChatbotScreen({Key? key}) : super(key: key);
-
-  @override
-  _ChatbotScreenState createState() => _ChatbotScreenState();
+void main() {
+  runApp(MyApp());
 }
 
-class _ChatbotScreenState extends State<ChatbotScreen> {
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Hostel Mess Chatbot',
+      theme: ThemeData.light(),
+      home: ChatBotScreen(),
+    );
+  }
+}
+
+class ChatBotScreen extends StatefulWidget {
+  @override
+  _ChatBotScreenState createState() => _ChatBotScreenState();
+}
+
+class _ChatBotScreenState extends State<ChatBotScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final List<Map<String, String>> _messages = [];
-  bool _isTyping = false; // Typing indicator
+  final String apiKey = "AIzaSyCSSffiqGSSI-IHhd4MMHvzWtiYpOl8MV0"; // Replace with your actual API key
 
-  void _sendMessage() {
-    String message = _messageController.text.trim();
-    if (message.isNotEmpty) {
-      setState(() {
-        _messages.add({"sender": "user", "text": message});
-        _isTyping = true;
-      });
+  final List<String> predefinedQuestions = [
+    "What's today's breakfast menu?",
+    "What's for lunch today?",
+    "What are the dinner options?",
+  ];
 
+  Future<void> _sendMessage(String message) async {
+    setState(() {
+      _messages.add({"sender": "user", "text": message});
       _messageController.clear();
+    });
+    
+    String botResponse = await _getBotResponse(message);
+    
+    setState(() {
+      _messages.add({"sender": "bot", "text": botResponse});
+    });
+    
+    _scrollToBottom();
+  }
 
-      Future.delayed(const Duration(seconds: 1), () {
-        setState(() {
-          _messages.add({"sender": "bot", "text": _generateBotReply(message)});
-          _isTyping = false;
-        });
-      });
+  Future<String> _getBotResponse(String message) async {
+    try {
+      final model = GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
+      final content = await model.generateContent([Content.text(message)]);
+
+      return content.text ?? "I'm here to help with your mess food queries!";
+    } catch (e) {
+      return "Sorry, I couldn't fetch the information right now.";
     }
   }
 
-  String _generateBotReply(String userMessage) {
-    userMessage = userMessage.toLowerCase();
-
-    if (userMessage.contains("menu")) {
-      return "Here’s our menu: 🍕 Pizza, 🍔 Burger, 🍟 Fries, 🍝 Pasta, 🥗 Salad, 🍩 Desserts!";
-    } else if (userMessage.contains("order")) {
-      return "You can place an order by selecting items from the menu! 😊 Need help?";
-    } else if (userMessage.contains("offer") || userMessage.contains("discount")) {
-      return "🎉 We have an exclusive offer today! Buy 1 Get 1 Free on all Burgers! 🍔🔥";
-    } else if (userMessage.contains("support") || userMessage.contains("help")) {
-      return "For any assistance, please contact our support team at 📞 1800-FOOD-HELP!";
-    } else if (userMessage.contains("status")) {
-      return "📦 Your order is being prepared and will be delivered soon! 🍕🚀";
-    } else if (userMessage.contains("thank") || userMessage.contains("thanks")) {
-      return "You're welcome! 😊 Enjoy your meal! 🍽️";
-    } else {
-      return "I'm here to assist you! Ask me anything about our food. 🍽️";
-    }
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Dark theme
-      appBar: AppBar(
-        title: const Text("Chatbot", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
-        elevation: 0,
-      ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.all(10),
-              itemCount: _messages.length + (_isTyping ? 1 : 0),
+              controller: _scrollController,
+              itemCount: _messages.length,
               itemBuilder: (context, index) {
-                if (_isTyping && index == _messages.length) {
-                  return _typingIndicator();
-                }
-
                 final message = _messages[index];
-                bool isUser = message["sender"] == "user";
+                final isUser = message["sender"] == "user";
                 return Align(
                   alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    padding: const EdgeInsets.all(12),
+                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      gradient: isUser
-                          ? const LinearGradient(
-                              colors: [Colors.greenAccent, Colors.teal],
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                            )
-                          : const LinearGradient(
-                              colors: [Colors.grey, Colors.black54],
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                            ),
-                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        colors: isUser ? [Colors.teal, Colors.cyan] : [Colors.white, Colors.purple.shade100],
+                      ),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                        bottomLeft: isUser ? Radius.circular(15) : Radius.zero,
+                        bottomRight: isUser ? Radius.zero : Radius.circular(15),
+                      ),
                     ),
                     child: Text(
                       message["text"]!,
-                      style: TextStyle(
-                        color: isUser ? Colors.black : Colors.white,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(fontSize: 16, color: isUser ? Colors.white : Colors.black87),
                     ),
                   ),
                 );
               },
             ),
           ),
-
-          // Chat Input Box
+          Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Wrap(
+                spacing: 10,
+                children: predefinedQuestions.map((question) {
+                return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal.shade200,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            ),
+                onPressed: () => _sendMessage(question),
+                child: Text(
+                question,
+                style: TextStyle(color: Colors.black), // Change predefined question text color to black
+            ),
+          );
+         }).toList(),
+        ),
+      ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
+                IconButton(
+                  icon: Icon(Icons.mic, color: Colors.teal),
+                  onPressed: () {
+                    _sendMessage("Voice input detected...");
+                  },
+                ),
+                SizedBox(width: 5),
                 Expanded(
                   child: TextField(
-                    controller: _messageController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: "Type a message...",
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      filled: true,
-                      fillColor: Colors.grey[900],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
+  controller: _messageController,
+  style: TextStyle(color: Colors.black), // Ensure input text is black
+  decoration: InputDecoration(
+    hintText: "Ask about today's meals...",
+    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+    filled: true,
+    fillColor: Colors.grey.shade200,
+  ),
+),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 FloatingActionButton(
-                  backgroundColor: Colors.greenAccent,
-                  onPressed: _sendMessage,
-                  child: const Icon(Icons.send, color: Colors.black),
+                  onPressed: () {
+                    if (_messageController.text.trim().isNotEmpty) {
+                      _sendMessage(_messageController.text.trim());
+                    }
+                  },
+                  backgroundColor: Colors.teal,
+                  child: Icon(Icons.send, color: Colors.white),
                 ),
               ],
             ),
@@ -141,30 +166,208 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ),
     );
   }
+}*/
+import 'package:flutter/material.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-  Widget _typingIndicator() {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Bot is typing",
-              style: TextStyle(color: Colors.white, fontSize: 14),
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Hostel Mess Chatbot',
+      theme: ThemeData.light(),
+      home: ChatBotScreen(),
+    );
+  }
+}
+
+class ChatBotScreen extends StatefulWidget {
+  @override
+  _ChatBotScreenState createState() => _ChatBotScreenState();
+}
+
+class _ChatBotScreenState extends State<ChatBotScreen> {
+  final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final List<Map<String, String>> _messages = [];
+  final String apiKey = "YOUR_GEMINI_API_KEY";
+  
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  String _text = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _speech = stt.SpeechToText();
+    _initSpeech();
+  }
+
+  void _initSpeech() async {
+    bool available = await _speech.initialize(
+      onStatus: (status) => print("Speech Status: $status"),
+      onError: (error) => print("Speech Error: $error"),
+    );
+    if (!available) {
+      print("Speech recognition not available");
+    }
+  }
+
+  Future<void> _sendMessage(String message) async {
+    setState(() {
+      _messages.add({"sender": "user", "text": message});
+      _messageController.clear();
+    });
+
+    String botResponse = await _getBotResponse(message);
+
+    setState(() {
+      _messages.add({"sender": "bot", "text": botResponse});
+    });
+
+    _scrollToBottom();
+  }
+
+  Future<String> _getBotResponse(String message) async {
+    try {
+      final model = GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
+      final content = await model.generateContent([Content.text(message)]);
+      return content.text ?? "I'm here to help with your mess food queries!";
+    } catch (e) {
+      return "Sorry, I couldn't fetch the information right now.";
+    }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize();
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (result) {
+            setState(() {
+              _text = result.recognizedWords;
+              _messageController.text = _text;
+            });
+          },
+          listenFor: Duration(seconds: 5),
+        );
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+      if (_text.isNotEmpty) {
+        _sendMessage(_text);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Hostel Mess Chatbot", style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.teal.shade700, Colors.teal.shade400],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(width: 5),
-            const SizedBox(
-              width: 10,
-              height: 10,
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
-              ),
-            ),
-          ],
+          ),
         ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[index];
+                final isUser = message["sender"] == "user";
+                return Align(
+                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isUser ? Colors.teal.shade500 : Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 5,
+                          offset: Offset(2, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      message["text"]!,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isUser ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: Icon(_isListening ? Icons.mic : Icons.mic_none, color: Colors.teal),
+                  onPressed: _listen,
+                ),
+                SizedBox(width: 5),
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    style: TextStyle(color: Colors.black),
+                    decoration: InputDecoration(
+                      hintText: "Ask about today's meals...",
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                      filled: true,
+                      fillColor: Colors.grey.shade200,
+                      contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                FloatingActionButton(
+                  onPressed: () {
+                    if (_messageController.text.trim().isNotEmpty) {
+                      _sendMessage(_messageController.text.trim());
+                    }
+                  },
+                  child: Icon(Icons.send, color: Colors.white),
+                  backgroundColor: Colors.teal,
+                  elevation: 2,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

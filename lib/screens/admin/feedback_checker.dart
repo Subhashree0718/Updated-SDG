@@ -200,12 +200,14 @@ class FeedbackChecker extends StatefulWidget {
 
 class _FeedbackCheckerState extends State<FeedbackChecker> {
   List<Map<String, dynamic>> feedbackList = [
-    
-    {"name": "Karuppasamy", "feedback": "Great service!", "sentiment": "positive", "resolved": false, "date": "2025-02-12"},
-    {"name": "Meenakshi", "feedback": "Food quality needs improvement.", "sentiment": "negative", "resolved": false, "date": "2025-02-11"},
-    {"name": "Thenmozhi", "feedback": "Food quality needs improvement.", "sentiment": "negative", "resolved": false, "date": "2025-02-11"},
-    {"name": "K.Kuppusamy ", "feedback": "Very fast response. Loved it!", "sentiment": "positive", "resolved": true, "date": "2025-02-10"},
-    {"name": "Maragatham", "feedback": "The canteen is not clean.", "sentiment": "negative", "resolved": false, "date": "2025-02-09"},
+    {"name": "Akilesh", "feedback": " Eventhough I am a North Indian, The Food Here Give the Homely Feel", "sentiment": "positive", "resolved": false, "date": "2025-02-12"},
+    {"name": "Vishnu", "feedback": "Food quality needs improvement.", "sentiment": "negative", "resolved": false, "date": "2025-02-11"},
+    {"name": "Deepak", "feedback": "Loved The Taste", "sentiment": "positive", "resolved": false, "date": "2025-02-11"},
+   
+    {"name": "Priyanka", "feedback": "Very fast response. Loved it!", "sentiment": "positive", "resolved": true, "date": "2025-02-10"},
+     {"name": "Subhashree", "feedback": "Great service!", "sentiment": "positive", "resolved": false, "date": "2025-02-11"},
+    {"name": "Amirtha", "feedback": "The canteen is clean and Hygiene.", "sentiment": "positive", "resolved": false, "date": "2025-02-09"},
+     {"name": "Shruthi", "feedback": "Better", "sentiment": "positive", "resolved": false, "date": "2025-02-09"},
   ];
 
   String selectedFilter = "All";

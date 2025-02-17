@@ -9,7 +9,8 @@ class ReleaseMenu extends StatefulWidget {
 
 class _ReleaseMenuState extends State<ReleaseMenu> {
   // List of available menu items
-   final List<String> availableItems = ["Idli", "Dosa", "Biryani", "Chapati", "Pongal", "Upma", "Paniyaram", "Uthappam", "Parotta", "Vada", "Sambar", "Rasam", "Kootu", "Kuzhambu", "Thayir Sadam", "Lemon Rice", "Puliyodarai", "Tomato Rice", "Coconut Rice", "Sakkarai Pongal"];
+  final List<String> availableItems = ["Idli", "Dosa", "Biryani", "Chapati", "Pongal", "Upma", "Paniyaram", "Uthappam", "Parotta", "Vada", "Sambar", "Rasam", "Kootu", "Kuzhambu", "Thayir Sadam", "Lemon Rice", "Puliyodarai", "Tomato Rice", "Coconut Rice", "Sakkarai Pongal"];
+
   // Admin-selected menu items
   final List<String> selectedItems = [];
 

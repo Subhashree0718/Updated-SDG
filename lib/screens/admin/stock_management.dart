@@ -34,7 +34,6 @@ class StockManagement extends StatefulWidget {
 }
 
 class _StockManagementState extends State<StockManagement> {
-  // Food stock list (Sample Data)
   final List<Map<String, dynamic>> stockItems = [
     {"name": "Rice", "quantity": 50},
     {"name": "Urad Dal", "quantity": 20},
@@ -45,10 +44,9 @@ class _StockManagementState extends State<StockManagement> {
     {"name": "Onion", "quantity": 25},
     {"name": "Milk", "quantity": 20},
     {"name": "Ghee", "quantity": 10},
-    {"name": "Oil", "quantity": 30},
+    {"name": "Oil", "quantity": 30}
   ];
 
-  // Function to update stock quantity
   void updateStock(int index, int change) {
     setState(() {
       stockItems[index]["quantity"] =
@@ -56,14 +54,21 @@ class _StockManagementState extends State<StockManagement> {
     });
   }
 
-  // Function to remove an item from stock
+  void setStock(int index, String value) {
+    int? newQuantity = int.tryParse(value);
+    if (newQuantity != null && newQuantity >= 0) {
+      setState(() {
+        stockItems[index]["quantity"] = newQuantity.clamp(0, 999);
+      });
+    }
+  }
+
   void removeItem(int index) {
     setState(() {
       stockItems.removeAt(index);
     });
   }
 
-  // Function to add a new item to stock
   void addNewItem(String itemName) {
     if (itemName.isNotEmpty && !stockItems.any((item) => item["name"] == itemName)) {
       setState(() {
@@ -72,7 +77,6 @@ class _StockManagementState extends State<StockManagement> {
     }
   }
 
-  // Text Controller for adding new item
   final TextEditingController _newItemController = TextEditingController();
 
   @override
@@ -87,7 +91,6 @@ class _StockManagementState extends State<StockManagement> {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            // Add New Stock Item Section
             Row(
               children: [
                 Expanded(
@@ -113,14 +116,12 @@ class _StockManagementState extends State<StockManagement> {
               ],
             ),
             const SizedBox(height: 20),
-
-            // Stock List
             Expanded(
               child: ListView.builder(
                 itemCount: stockItems.length,
                 itemBuilder: (context, index) {
                   var item = stockItems[index];
-                  bool isLowStock = item["quantity"] < 5; // Low stock warning
+                  bool isLowStock = item["quantity"] < 5;
 
                   return Card(
                     color: Colors.grey[900],
@@ -129,14 +130,26 @@ class _StockManagementState extends State<StockManagement> {
                         item["name"],
                         style: TextStyle(color: isLowStock ? Colors.redAccent : Colors.white),
                       ),
-                      subtitle: Text("Stock: ${item["quantity"]} units",
-                          style: TextStyle(color: isLowStock ? Colors.redAccent : Colors.grey)),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
                             icon: const Icon(Icons.remove_circle, color: Colors.redAccent),
                             onPressed: () => updateStock(index, -1),
+                          ),
+                          SizedBox(
+                            width: 50,
+                            child: TextField(
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(color: Colors.white),
+                              controller: TextEditingController()
+                                ..text = item["quantity"].toString(),
+                              onSubmitted: (value) => setStock(index, value),
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                              ),
+                            ),
                           ),
                           IconButton(
                             icon: const Icon(Icons.add_circle, color: Colors.greenAccent),

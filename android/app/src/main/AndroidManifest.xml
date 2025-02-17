@@ -24,6 +24,41 @@
 <intent>
 <action android:name="android.intent.action.VIEW"/>
 <category android:name="android.intent.category.BROWSABLE"/>
+No logs can be added to the provided AndroidManifest.xml file as it is an XML file used to declare components of an Android application and does not support logging. 
+
+However, if you want to add logs to your Android application, you can do so in your Java or Kotlin files. Here's an example of how you can add logs in your MainActivity.java file:
+
+```java
+import android.util.Log;
+
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
+        // Your code here
+    }
+}
+```
+
+Or in your MainActivity.kt file:
+
+```kotlin
+import android.util.Log
+
+class MainActivity : AppCompatActivity() {
+    private val TAG = "MainActivity"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate: ")
+        // Your code here
+    }
+}
+```
+
 <data android:scheme="https"/>
 </intent>
 </queries>
